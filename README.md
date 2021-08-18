@@ -5,6 +5,8 @@
 
 NCSA Common Puppet Profiles - configure an Apache HTTPd website
 
+# This module is still in development and should not yet be used on a production host
+
 ## Table of Contents
 
 1. [Description](#description)
