@@ -6,19 +6,19 @@
 
 ### Classes
 
-* [`profile_website`](#profile_website): configure an Apache HTTPd website
+* [`profile_website`](#profile_website): Configure an Apache HTTPd website
 * [`profile_website::firewall`](#profile_websitefirewall): Open HTTPd ports in the firewall
-* [`profile_website::httpd`](#profile_websitehttpd): A short summary of the purpose of this class
-* [`profile_website::modules`](#profile_websitemodules): configure Apache HTTPd modules
-* [`profile_website::modules::auth`](#profile_websitemodulesauth): Configure default httpd authentication modules
-* [`profile_website::modules::php`](#profile_websitemodulesphp): Install and configure PHP
+* [`profile_website::kerberos`](#profile_websitekerberos): Manage Kerberos HTTP Principal
+* [`profile_website::monitoring`](#profile_websitemonitoring): Register monitoring for the website
+* [`profile_website::php`](#profile_websitephp): Install and configure PHP
 * [`profile_website::ssl`](#profile_websitessl): Configure SSL certificates for apache httpd
+* [`profile_website::vhost`](#profile_websitevhost): Ensure apache::vhost configured
 
 ## Classes
 
 ### <a name="profile_website"></a>`profile_website`
 
-A description of what this class does
+Configure an Apache HTTPd website
 
 #### Examples
 
@@ -59,67 +59,62 @@ Data type: `Hash[String,String]`
 
 Subnets allowed access via https port
 
-### <a name="profile_websitehttpd"></a>`profile_website::httpd`
+### <a name="profile_websitekerberos"></a>`profile_website::kerberos`
 
-A description of what this class does
-
-#### Examples
-
-##### 
-
-```puppet
-include profile_website::httpd
-```
-
-### <a name="profile_websitemodules"></a>`profile_website::modules`
-
-configure Apache HTTPd modules
+Manage Kerberos HTTP Principal
 
 #### Examples
 
 ##### 
 
 ```puppet
-include profile_website::modules
+include profile_website::kerberos
 ```
 
 #### Parameters
 
-The following parameters are available in the `profile_website::modules` class:
+The following parameters are available in the `profile_website::kerberos` class:
 
-* [`enable_php`](#enable_php)
-* [`enable_auth`](#enable_auth)
-* [`enable_php`](#enable_php)
+* [`http_keytab_file`](#http_keytab_file)
 
-##### <a name="enable_php"></a>`enable_php`
+##### <a name="http_keytab_file"></a>`http_keytab_file`
 
-Data type: `Boolean`
+Data type: `String`
 
-Enable PHP modules
+Full path to keytab file for http principal
 
-##### <a name="enable_auth"></a>`enable_auth`
+### <a name="profile_websitemonitoring"></a>`profile_website::monitoring`
 
-Data type: `Boolean`
-
-Enable auth modules
-
-##### <a name="enable_php"></a>`enable_php`
-
-Enable PHP modules
-
-### <a name="profile_websitemodulesauth"></a>`profile_website::modules::auth`
-
-Configure default httpd authentication modules
+Register monitoring for the website
 
 #### Examples
 
 ##### 
 
 ```puppet
-include profile_website::modules::auth
+include profile_website::monitoring
 ```
 
-### <a name="profile_websitemodulesphp"></a>`profile_website::modules::php`
+#### Parameters
+
+The following parameters are available in the `profile_website::monitoring` class:
+
+* [`telegraf_sslcert_check_file`](#telegraf_sslcert_check_file)
+* [`telegraf_website_check_file`](#telegraf_website_check_file)
+
+##### <a name="telegraf_sslcert_check_file"></a>`telegraf_sslcert_check_file`
+
+Data type: `String`
+
+Full path to telegraf sslcert check file
+
+##### <a name="telegraf_website_check_file"></a>`telegraf_website_check_file`
+
+Data type: `String`
+
+Full path to telegraf website check file
+
+### <a name="profile_websitephp"></a>`profile_website::php`
 
 Install and configure PHP
 
@@ -128,34 +123,27 @@ Install and configure PHP
 ##### 
 
 ```puppet
-include profile_website::modules::php
+include profile_website::php
 ```
 
 #### Parameters
 
-The following parameters are available in the `profile_website::modules::php` class:
+The following parameters are available in the `profile_website::php` class:
 
-* [`packages`](#packages)
-* [`yumrepo`](#yumrepo)
 * [`ini_file`](#ini_file)
-
-##### <a name="packages"></a>`packages`
-
-Data type: `Array[String[1], 1]`
-
-list of packages necessary for PHP installation
-
-##### <a name="yumrepo"></a>`yumrepo`
-
-Data type: `String`
-
-yum repository for installing PHP
+* [`ini_settings`](#ini_settings)
 
 ##### <a name="ini_file"></a>`ini_file`
 
 Data type: `String`
 
+Full path to default ini_file where PHP settings are set
 
+##### <a name="ini_settings"></a>`ini_settings`
+
+Data type: `Hash[String, String]`
+
+Key value pairs of desired PHP settings
 
 ### <a name="profile_websitessl"></a>`profile_website::ssl`
 
@@ -180,11 +168,23 @@ The following parameters are available in the `profile_website::ssl` class:
 
 Data type: `Hash[String,String]`
 
-certificate files and contents for manually configured certificates
+Certificate files and contents for manually configured certificates
 
 ##### <a name="enable_letsencrypt"></a>`enable_letsencrypt`
 
 Data type: `Boolean`
 
-Enable lets encrypt for ssl certificate management
+Enable Let’s Encrypt for ssl certificate management
+
+### <a name="profile_websitevhost"></a>`profile_website::vhost`
+
+Ensure apache::vhost configured
+
+#### Examples
+
+##### 
+
+```puppet
+include profile_website::vhost
+```
 
