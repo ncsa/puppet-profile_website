@@ -1,38 +1,23 @@
 ---
-apache::default_vhost: false
-apache::serveradmin: "web@ncsa.illinois.edu"
-apache::server_tokens: "Prod"
-apache::server_signature: false
-apache::trace_enable: false
-
-apache::modules:
-  "ssl":
-    ssl_cipher: "EECDH+AESGCM:EDH+AESGCM:AES256+EECDH:AES256+EDH"
-    ssl_protocol:
-      - "all"
-      - "-SSLv2"
-      - "-SSLv3"
-      - "-TLSv1"
-      - "-TLSv1.1"
-    ssl_honorcipherorder: true
-    ssl_compression: false
-    ssl_stapling: true
-    stapling_cache: "shmcb:logs/stapling-cache(150000)"
-
 profile_website::firewall::http_allowed_subnets:
-  "NCSA": "141.142.0.0/16"
+  "public": "0.0.0.0/0"
+  #"NCSA private": "172.24.0.0/13"
+  #"NCSA private old": "10.142.0.0/16"
+  #"NCSA public": "141.142.0.0/16"
 profile_website::firewall::https_allowed_subnets:
-  "NCSA": "141.142.0.0/16"
-  "SSLlabs testing": "64.41.200.96/28"
+  "public": "0.0.0.0/0"
+  #"NCSA private": "172.24.0.0/13"
+  #"NCSA private old": "10.142.0.0/16"
+  #"NCSA public": "141.142.0.0/16"
+  #"SSLlabs testing": "64.41.200.96/28"
 
-profile_website::modules::enable_auth: true
-profile_website::modules::enable_php: true
+profile_website::kerberos::http_keytab_file: "/etc/httpd/conf/keytab"
 
-profile_website::modules::php::yumrepo: "http://lsst-repos01.ncsa.illinois.edu/centos/$releasever/$basearch/centos-sclo-rh/2021-06-16-1623878701/"
-profile_website::modules::php::packages:
-  - "rh-php73"
-  - "rh-php73-php"
-profile_website::modules::php::ini_file: "/etc/opt/rh/rh-php73/php.ini"
+profile_website::monitoring::telegraf_sslcert_check_file: "/etc/telegraf/telegraf.d/sslcert-check.conf"
+profile_website::monitoring::telegraf_website_check_file: "/etc/telegraf/telegraf.d/website-check.conf"
 
-profile_website::ssl::certificate_files: []
+profile_website::php::ini_file: "/etc/php.d/00-puppet.ini"
+profile_website::php::ini_settings: {}
+
+profile_website::ssl::certificate_files: {}
 profile_website::ssl::enable_letsencrypt: true

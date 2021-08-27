@@ -1,25 +1,21 @@
-# @summary configure an Apache HTTPd website
-#
-# A description of what this class does
+# @summary Configure an Apache HTTPd website
 #
 # @example
 #   include profile_website
 class profile_website (
 ) {
 
+  include ::apache
+  include ::apache::mod::ldap
+  ## IF IN FUTURE WE SET PARAMETERS
+  #ensure_resource( 'class', '::apache::mod::ldap', lookup('apache::mod::ldap') )
+
+#  include ::apache::mod::auth_openidc
   include profile_website::firewall
-  include profile_website::modules
+  include profile_website::kerberos
+  include profile_website::monitoring
+  include profile_website::php
   include profile_website::ssl
-
-  # Include Apache
-  class { 'apache':
-    default_vhost => false,
-  }
-
-  # CREATE A HASH FROM HIERA DATA WITH THE VHOSTS
-  $my_apache_vhosts = hiera('apache::vhost', {})
-
-  # WITH CREATE RESOURCE CONVERTS A HASH INTO A SET OF RESOURCES
-  create_resources('apache::vhost', $my_apache_vhosts)
+  include profile_website::vhost
 
 }

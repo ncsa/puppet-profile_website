@@ -5,42 +5,111 @@
 
 NCSA Common Puppet Profiles - configure an Apache HTTPd website
 
-# This module is still in development and should not yet be used on a production host
-
-## Table of Contents
-
-1. [Description](#description)
-1. [Setup - The basics of getting started with profile_website](#setup)
-    * [What profile_website affects](#what-profile_website-affects)
-    * [Setup requirements](#setup-requirements)
-    * [Beginning with profile_website](#beginning-with-profile_website)
-1. [Usage - Configuration options and additional functionality](#usage)
-1. [Limitations - OS compatibility, etc.](#limitations)
-1. [Development - Guide for contributing to the module](#development)
-
-## Description
-
-This puppet profile configures a host with basic Apache HTTPd web service according to NCSA's recommended practices.
-
-## Setup
-
-Include profile_website in a puppet profile file:
-```
-include ::profile_website
-```
-
 ## Usage
 
-The goal is that no paramters are required to be set. The default paramters should work for most NCSA deployments out of the box.
+To install and configure:
+
+```
+  include profile_website
+```
+
+## Configuration
+
+The following [`apache`](https://forge.puppet.com/modules/puppetlabs/apache/reference) parameters need to be set:
+```
+apache::default_ssl_cert: "/etc/letsencrypt/live/%{facts.fqdn}/fullchain.pem"
+apache::default_ssl_key: "/etc/letsencrypt/live/%{facts.fqdn}/privkey.pem"
+apache::mod::ssl:
+  # WITH PARAMETERS
+apache::mpm_module: "prefork"
+
+apache::vhost:
+  # WITH PARAMETERS
+```
+
+Below is a working hiera example to create Apache virtual hosts for the fully qualified domain of a host:
+```
+apache::default_mods: false
+apache::default_vhost: false
+apache::default_ssl_vhost: false
+apache::default_ssl_cert: "/etc/letsencrypt/live/%{facts.fqdn}/fullchain.pem"
+apache::default_ssl_key: "/etc/letsencrypt/live/%{facts.fqdn}/privkey.pem"
+apache::access_log_file: "|/usr/bin/logger -t httpd -p local6.info"
+apache::error_log_file: "syslog:local6"
+apache::mod::ssl:
+  ssl_cipher: "EECDH+AESGCM:EDH+AESGCM:AES256+EECDH:AES256+EDH"
+  ssl_compression: false
+  ssl_honorcipherorder: true
+  ssl_protocol:
+    - "all"
+    - "-SSLv2"
+    - "-SSLv3"
+    - "-TLSv1"
+    - "-TLSv1.1"
+  ssl_stapling: true
+  stapling_cache: "shmcb:logs/stapling-cache(150000)"
+apache::mpm_module: "prefork"
+apache::serveradmin: "web@ncsa.illinois.edu"
+apache::server_tokens: "Prod"
+apache::server_signature: "Off"
+apache::trace_enable: "Off"
+
+apache::vhost:
+  "%{facts.fqdn}-ssl":
+    servername: "%{facts.fqdn}"
+    serveraliases:
+      - "%{facts.fqdn}"
+    access_log_pipe: "|/bin/sh -c
+      '/usr/bin/tee
+      -a /var/log/httpd/%{facts.fqdn}-ssl_access_ssl.log'
+      |/bin/sh -c '/usr/bin/logger -t httpd -p local6.notice'"
+    docroot: "/var/www/html"
+    error_log_pipe: "|/bin/sh -c
+      '/usr/bin/tee
+      -a /var/log/httpd/%{facts.fqdn}-ssl_error_ssl.log'
+      |/bin/sh -c '/usr/bin/logger -t httpd -p local6.err'"
+    log_level: "warn"
+    port: 443
+    ssl: true
+    headers:
+      - "always set Strict-Transport-Security \"max-age=31536000\""
+      - "set Content-Security-Policy \"default-src 'self' 'unsafe-inline' 'unsafe-eval' data:;\""
+      - "set X-Content-Type-Options nosniff"
+    rewrites:
+      - comment: "rewrite all urls to use SSL with default hostname"
+        rewrite_cond: "%%{}{HTTPS} off"
+        rewrite_rule: "(.*)  https://%%{}{SERVER_NAME}/$1 [R,L]"
+  "%{facts.fqdn}-nossl":
+    servername: "%{facts.fqdn}"
+    serveraliases:
+      - "%{facts.fqdn}"
+    access_log_pipe: "|/bin/sh -c
+      '/usr/bin/tee
+      -a /var/log/httpd/%{facts.fqdn}-nossl_access.log'
+      |/bin/sh -c '/usr/bin/logger -t httpd -p local6.notice'"
+    docroot: "/var/www/html"
+    error_log_pipe: "|/bin/sh -c
+      '/usr/bin/tee
+      -a /var/log/httpd/%{facts.fqdn}-nossl_error.log'
+      |/bin/sh -c '/usr/bin/logger -t httpd -p local6.err'"
+    port: 80
+    headers:
+      - "always set Strict-Transport-Security \"max-age=31536000\""
+      - "set Content-Security-Policy \"default-src 'self' 'unsafe-inline' 'unsafe-eval' data:;\""
+      - "set X-Content-Type-Options nosniff"
+    rewrites:
+      - comment: "rewrite all urls to use SSL with default hostname"
+        rewrite_cond: "%%{}{HTTPS} off"
+        rewrite_rule: "(.*)  https://%%{}{SERVER_NAME}/$1 [R,L]"
+```
+
+## Dependencies
+- [puppet/letsencrypt](https://forge.puppet.com/modules/puppet/letsencrypt)
+- [puppetlabs/apache](https://forge.puppet.com/modules/puppetlabs/apache)
+- [puppetlabs/firewall](https://forge.puppet.com/puppetlabs/firewall)
+- [puppetlabs/stdlib](https://forge.puppet.com/modules/puppetlabs/stdlib)
 
 ## Reference
 
-See: [REFERENCE.md](REFERENCE.md)
+[REFERENCE.md](REFERENCE.md)
 
-## Limitations
-
-n/a
-
-## Development
-
-This Common Puppet Profile is managed by NCSA for internal usage.
