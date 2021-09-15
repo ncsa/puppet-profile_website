@@ -17,7 +17,8 @@ profile_website::monitoring::telegraf_sslcert_check_file: "/etc/telegraf/telegra
 profile_website::monitoring::telegraf_website_check_file: "/etc/telegraf/telegraf.d/website-check.conf"
 
 profile_website::php::ini_file: "/etc/php.d/00-puppet.ini"
-profile_website::php::ini_settings: {}
+profile_website::php::ini_settings:
+  date.timezone: "America/Chicago"
 
 profile_website::ssl::certificate_files: {}
 profile_website::ssl::enable_letsencrypt: true
