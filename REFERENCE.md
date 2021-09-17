@@ -130,8 +130,23 @@ include profile_website::php
 
 The following parameters are available in the `profile_website::php` class:
 
+* [`auto_prepend_file`](#auto_prepend_file)
+* [`auto_prepend_file_content`](#auto_prepend_file_content)
 * [`ini_file`](#ini_file)
 * [`ini_settings`](#ini_settings)
+* [`timezone`](#timezone)
+
+##### <a name="auto_prepend_file"></a>`auto_prepend_file`
+
+Data type: `String`
+
+Full path to default auto_prepend_file
+
+##### <a name="auto_prepend_file_content"></a>`auto_prepend_file_content`
+
+Data type: `String`
+
+Contents of auto_prepend_file
 
 ##### <a name="ini_file"></a>`ini_file`
 
@@ -144,6 +159,12 @@ Full path to default ini_file where PHP settings are set
 Data type: `Hash[String, String]`
 
 Key value pairs of desired PHP settings
+
+##### <a name="timezone"></a>`timezone`
+
+Data type: `String`
+
+String of timezone
 
 ### <a name="profile_websitessl"></a>`profile_website::ssl`
 
