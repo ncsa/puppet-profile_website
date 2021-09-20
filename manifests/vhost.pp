@@ -60,6 +60,17 @@ class profile_website::vhost {
         -a /var/log/httpd/${facts['fqdn']}-nossl_error.log' \
         |/bin/sh -c '/usr/bin/logger -t httpd -p local6.err'",
     }
+
+    ## NEED TO MAKE SURE FIREWALL TCP PORT 80 IS OPEN TO THE WORLD
+    ## SO THAT letsencrypt CAN BE CONFIGURED
+    firewall { '400 temporarilly allow HTTP on tcp port 80 from anywhere while letsencrypt obtains certificate':
+      dport  => '80',
+      proto  => tcp,
+      source => '0.0.0.0/0',
+      action => accept,
+    }
+
+
   }
 
 }
