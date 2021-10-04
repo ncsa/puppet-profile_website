@@ -6,6 +6,8 @@ class profile_website (
 ) {
 
   include ::apache
+  include ::apache::mod::alias
+  include ::apache::mod::autoindex
   include ::apache::mod::ldap
   ## IF IN FUTURE WE SET PARAMETERS
   #ensure_resource( 'class', '::apache::mod::ldap', lookup('apache::mod::ldap') )

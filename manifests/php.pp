@@ -1,16 +1,28 @@
 # @summary Install and configure PHP
 #
+# @param auto_prepend_file
+#   Full path to default auto_prepend_file
+#
+# @param auto_prepend_file_content
+#   Contents of auto_prepend_file
+#
 # @param ini_file
 #   Full path to default ini_file where PHP settings are set
 #
 # @param ini_settings
 #   Key value pairs of desired PHP settings
 #
+# @param timezone
+#   String of timezone
+#
 # @example
 #   include profile_website::php
 class profile_website::php (
+  String               $auto_prepend_file,
+  String               $auto_prepend_file_content,
   String               $ini_file,
   Hash[String, String] $ini_settings,
+  String               $timezone,
 ) {
 
   if ($facts['os']['family'] == 'RedHat' and $facts['os']['release']['major'] >= '8') {
@@ -44,7 +56,7 @@ class profile_website::php (
         replace => true,
         line    => "${k} = ${v}",
         match   => "${k}.*",
-        notify  => Class['apache::service']
+        notify  => Class['apache::service'],
       }
     }
   }
@@ -53,7 +65,27 @@ class profile_website::php (
     line   => 'expose_php = Off',
     match  => '^expose_php = .*$',
     path   => $ini_file,
-    notify => Class['apache::service']
+    notify => Class['apache::service'],
+  }
+  file_line { 'PHP set timezone':
+    line   => "date.timezone = ${timezone}",
+    match  => '^date-timezone = .*$',
+    path   => $ini_file,
+    notify => Class['apache::service'],
+  }
+  file_line { 'PHP set auto_prepend_file':
+    line   => "auto_prepend_file = ${auto_prepend_file}",
+    match  => '^auto_prepend_file = .*$',
+    path   => $ini_file,
+    notify => Class['apache::service'],
+  }
+  file { $auto_prepend_file:
+    ensure  => file,
+    content => $auto_prepend_file_content,
+    mode    => '0644',
+    owner   => root,
+    group   => root,
+    notify  => Class['apache::service'],
   }
 
 }
