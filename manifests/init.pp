@@ -11,6 +11,10 @@ class profile_website (
   include ::apache::mod::ldap
   ## IF IN FUTURE WE SET PARAMETERS
   #ensure_resource( 'class', '::apache::mod::ldap', lookup('apache::mod::ldap') )
+  #include ::apache::mod::proxy
+  ensure_resource( 'class', '::apache::mod::proxy', lookup('apache::mod::proxy') )
+  include ::apache::mod::proxy_http
+  include ::apache::mod::proxy_wstunnel
 
 #  include ::apache::mod::auth_openidc
   include profile_website::firewall
