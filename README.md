@@ -17,7 +17,8 @@ To install and configure:
 
 The following [`apache`](https://forge.puppet.com/modules/puppetlabs/apache/reference) parameters need to be set:
 ```
-apache::default_ssl_cert: "/etc/letsencrypt/live/%{facts.fqdn}/fullchain.pem"
+apache::default_ssl_cert: "/etc/letsencrypt/live/%{facts.fqdn}/cert.pem"
+apache::default_ssl_chain: "/etc/letsencrypt/live/%{facts.fqdn}/chain.pem"
 apache::default_ssl_key: "/etc/letsencrypt/live/%{facts.fqdn}/privkey.pem"
 apache::mod::ssl:
   # WITH PARAMETERS

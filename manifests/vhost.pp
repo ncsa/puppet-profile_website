@@ -48,6 +48,8 @@ class profile_website::vhost {
     $ssl_vhost_name = String("${facts['fqdn']}-ssl")
     $servername = $vhost[$ssl_vhost_name]['servername']
     $serveraliases = $vhost[$ssl_vhost_name]['serveraliases']
+    $docroot = $vhost[$ssl_vhost_name]['docroot']
+
     apache::vhost { "${facts['fqdn']}-temp-nossl":
       port            => '80',
       servername      => $servername,
@@ -55,7 +57,15 @@ class profile_website::vhost {
       access_log_pipe => "|/bin/sh -c '/usr/bin/tee \
         -a /var/log/httpd/${facts['fqdn']}-nossl_access.log' \
         |/bin/sh -c '/usr/bin/logger -t httpd -p local6.notice'",
-      docroot         => '/var/www/html',
+      directories     => [
+        { 'path'    => $docroot,
+          'require' => [
+            'expr ( %{HTTP_USER_AGENT} =~ /validation server/)',
+            'expr ( %{HTTP_USER_AGENT} =~ /www.letsencrypt.org/)',
+          ],
+        },
+      ],
+      docroot         => $docroot,
       error_log_pipe  => "|/bin/sh -c '/usr/bin/tee \
         -a /var/log/httpd/${facts['fqdn']}-nossl_error.log' \
         |/bin/sh -c '/usr/bin/logger -t httpd -p local6.err'",
