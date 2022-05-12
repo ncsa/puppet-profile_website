@@ -106,6 +106,7 @@ apache::vhost:
 
 ## Dependencies
 - [puppet/letsencrypt](https://forge.puppet.com/modules/puppet/letsencrypt)
+- [puppet/php](https://forge.puppet.com/modules/puppet/php/)
 - [puppetlabs/apache](https://forge.puppet.com/modules/puppetlabs/apache)
 - [puppetlabs/firewall](https://forge.puppet.com/puppetlabs/firewall)
 - [puppetlabs/stdlib](https://forge.puppet.com/modules/puppetlabs/stdlib)
