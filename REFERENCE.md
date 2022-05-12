@@ -132,9 +132,9 @@ The following parameters are available in the `profile_website::php` class:
 
 * [`auto_prepend_file`](#auto_prepend_file)
 * [`auto_prepend_file_content`](#auto_prepend_file_content)
+* [`enable`](#enable)
 * [`ini_file`](#ini_file)
-* [`ini_settings`](#ini_settings)
-* [`timezone`](#timezone)
+* [`version`](#version)
 
 ##### <a name="auto_prepend_file"></a>`auto_prepend_file`
 
@@ -148,23 +148,23 @@ Data type: `String`
 
 Contents of auto_prepend_file
 
+##### <a name="enable"></a>`enable`
+
+Data type: `Boolean`
+
+Whether to enable PHP for this website
+
 ##### <a name="ini_file"></a>`ini_file`
 
 Data type: `String`
 
 Full path to default ini_file where PHP settings are set
 
-##### <a name="ini_settings"></a>`ini_settings`
-
-Data type: `Hash[String, String]`
-
-Key value pairs of desired PHP settings
-
-##### <a name="timezone"></a>`timezone`
+##### <a name="version"></a>`version`
 
 Data type: `String`
 
-String of timezone
+Version of PHP to install/enable via DNF module (RHEL >= 8)
 
 ### <a name="profile_websitessl"></a>`profile_website::ssl`
 

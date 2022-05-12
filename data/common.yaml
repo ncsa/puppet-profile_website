@@ -1,4 +1,14 @@
 ---
+php::ensure: "present"
+php::fpm: true
+php::pear: true
+php::phpunit: false
+php::settings:
+  "expose_php": "Off"
+  "date.timezone": "America/Chicago"
+  "auto_prepend_file": "/usr/share/php/prepend.php"
+php::extensions: {}
+
 profile_website::firewall::http_allowed_subnets:
   "public": "0.0.0.0/0"
   #"NCSA private": "172.24.0.0/13"
@@ -25,9 +35,9 @@ profile_website::php::auto_prepend_file_content: |
     unset($_SERVER['HTTP_AUTHORIZATION']);
     unset($_SERVER['PHP_AUTH_PW']);
   ?>
-profile_website::php::ini_file: "/etc/php.d/00-puppet.ini"
-profile_website::php::ini_settings: {}
-profile_website::php::timezone: "America/Chicago"
+profile_website::php::enable: false
+profile_website::php::ini_file: "/etc/php.ini"
+profile_website::php::version: "7.2"
 
 profile_website::ssl::certificate_files: {}
 profile_website::ssl::enable_letsencrypt: true

@@ -44,6 +44,15 @@ class profile_website::vhost {
       withpath => true,
     }
 
+    # THE FOLLOWING WILL BE REMOVED ONCE LETS ENCRYPT OBTAINS ITS FIRST CERTIFICATE
+    firewall { '400 temporarily allow HTTP on tcp port 80 for letsencrypt':
+      dport  => '80',
+      proto  => tcp,
+      source => '0.0.0.0/0',
+      action => accept,
+      before => Class['letsencrypt'],
+    }
+
     $vhost = lookup('apache::vhost', Hash)
     $ssl_vhost_name = String("${facts['fqdn']}-ssl")
     $servername = $vhost[$ssl_vhost_name]['servername']
@@ -69,6 +78,7 @@ class profile_website::vhost {
       error_log_pipe  => "|/bin/sh -c '/usr/bin/tee \
         -a /var/log/httpd/${facts['fqdn']}-nossl_error.log' \
         |/bin/sh -c '/usr/bin/logger -t httpd -p local6.err'",
+      before          => Class['letsencrypt'],
     }
   }
 
