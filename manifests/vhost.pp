@@ -60,7 +60,7 @@ class profile_website::vhost {
     $docroot = $vhost[$ssl_vhost_name]['docroot']
 
     apache::vhost { "${facts['fqdn']}-temp-nossl":
-      port            => '80',
+      port            => 80,
       servername      => $servername,
       serveraliases   => $serveraliases,
       access_log_pipe => "|/bin/sh -c '/usr/bin/tee \
