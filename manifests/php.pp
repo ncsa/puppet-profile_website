@@ -24,9 +24,7 @@ class profile_website::php (
   String               $ini_file,
   String               $version,
 ) {
-
   if $enable {
-
     if ($facts['os']['family'] == 'RedHat' and $facts['os']['release']['major'] >= '8') {
       # SELECT SPECIFIC VERSION OF PHP VIA DNF MODULE SETTINGS
       $dnf_php_command = "dnf -y module reset php && dnf -y module enable php:${version}"
@@ -37,8 +35,8 @@ class profile_website::php (
       }
     }
 
-    include ::apache::mod::php
-    include ::php
+    include apache::mod::php
+    include php
 
     file { $auto_prepend_file:
       ensure  => file,
@@ -50,13 +48,12 @@ class profile_website::php (
     }
 
     file { $ini_file:
-      ensure => 'present',
+      ensure => 'file',
       mode   => '0644',
     }
 
     # PHP MODULE WASN'T UPDATING THE VALUES IN /etc/php.ini AS EXPECTED
-    $::php::settings.each | $setting, $value |
-    {
+    $php::settings.each | $setting, $value | {
       ini_setting { "${ini_file} ${setting} = ${value}":
         ensure  => present,
         path    => $ini_file,
@@ -66,7 +63,5 @@ class profile_website::php (
         notify  => Service['php-fpm'],
       }
     }
-
   }
-
 }

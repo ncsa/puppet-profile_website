@@ -12,20 +12,19 @@ class profile_website::ssl (
   Hash[String,String] $certificate_files,
   Boolean             $enable_letsencrypt,
 ) {
-
   ensure_resource( 'class', '::apache::mod::ssl', lookup('apache::mod::ssl') )
 
   if $enable_letsencrypt {
-    include ::letsencrypt
+    include letsencrypt
 
     ## PULL apache::vhost DATA FOR $facts['fqdn']
     $vhost = lookup('apache::vhost', Hash)
-    $vhost_name = String("${facts['fqdn']}-ssl")
+    $vhost_name = String("${facts['networking']['fqdn']}-ssl")
     $servername = $vhost[$vhost_name]['servername']
     $serveraliases = $vhost[$vhost_name]['serveraliases']
-    $domains = unique( sort( [ $facts['fqdn'], $servername ] + $serveraliases ))
+    $domains = unique( sort([$facts['networking']['fqdn'], $servername] + $serveraliases ))
     $docroot = $vhost[$vhost_name]['docroot']
-    letsencrypt::certonly { $facts['fqdn']:
+    letsencrypt::certonly { $facts['networking']['fqdn']:
       domains       => $domains,
       plugin        => 'webroot',
       webroot_paths => [
@@ -40,10 +39,9 @@ class profile_website::ssl (
   elsif ( ! empty($certificate_files) ) {
     # READ HASH OF CERTIFICATE FILES AND CONTENTS FROM HIERA
     # CREATE EACH CERTIFICATE FILE WITH RESPECTIVE CONTENT
-    $certificate_files.each | $file, $content |
-    {
+    $certificate_files.each | $file, $content | {
       file { $file:
-        ensure  => present,
+        ensure  => file,
         owner   => root,
         group   => apache,
         mode    => '0640',
@@ -51,7 +49,7 @@ class profile_website::ssl (
         notify  => [
           Class['apache::service'],
           Class['profile_website::vhost'],
-        ]
+        ],
       }
     }
   }
@@ -66,5 +64,4 @@ class profile_website::ssl (
       withpath => true,
     }
   }
-
 }

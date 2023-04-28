@@ -7,12 +7,12 @@
 ### Classes
 
 * [`profile_website`](#profile_website): Configure an Apache HTTPd website
-* [`profile_website::firewall`](#profile_websitefirewall): Open HTTPd ports in the firewall
-* [`profile_website::kerberos`](#profile_websitekerberos): Manage Kerberos HTTP Principal
-* [`profile_website::monitoring`](#profile_websitemonitoring): Register monitoring for the website
-* [`profile_website::php`](#profile_websitephp): Install and configure PHP
-* [`profile_website::ssl`](#profile_websitessl): Configure SSL certificates for apache httpd
-* [`profile_website::vhost`](#profile_websitevhost): Ensure apache::vhost configured
+* [`profile_website::firewall`](#profile_website--firewall): Open HTTPd ports in the firewall
+* [`profile_website::kerberos`](#profile_website--kerberos): Manage Kerberos HTTP Principal
+* [`profile_website::monitoring`](#profile_website--monitoring): Register monitoring for the website
+* [`profile_website::php`](#profile_website--php): Install and configure PHP
+* [`profile_website::ssl`](#profile_website--ssl): Configure SSL certificates for apache httpd
+* [`profile_website::vhost`](#profile_website--vhost): Ensure apache::vhost configured
 
 ## Classes
 
@@ -28,7 +28,7 @@ Configure an Apache HTTPd website
 include profile_website
 ```
 
-### <a name="profile_websitefirewall"></a>`profile_website::firewall`
+### <a name="profile_website--firewall"></a>`profile_website::firewall`
 
 Open HTTPd ports in the firewall
 
@@ -44,22 +44,22 @@ include profile_website::firewall
 
 The following parameters are available in the `profile_website::firewall` class:
 
-* [`http_allowed_subnets`](#http_allowed_subnets)
-* [`https_allowed_subnets`](#https_allowed_subnets)
+* [`http_allowed_subnets`](#-profile_website--firewall--http_allowed_subnets)
+* [`https_allowed_subnets`](#-profile_website--firewall--https_allowed_subnets)
 
-##### <a name="http_allowed_subnets"></a>`http_allowed_subnets`
+##### <a name="-profile_website--firewall--http_allowed_subnets"></a>`http_allowed_subnets`
 
 Data type: `Hash[String,String]`
 
 Subnets allowed access via http port
 
-##### <a name="https_allowed_subnets"></a>`https_allowed_subnets`
+##### <a name="-profile_website--firewall--https_allowed_subnets"></a>`https_allowed_subnets`
 
 Data type: `Hash[String,String]`
 
 Subnets allowed access via https port
 
-### <a name="profile_websitekerberos"></a>`profile_website::kerberos`
+### <a name="profile_website--kerberos"></a>`profile_website::kerberos`
 
 Manage Kerberos HTTP Principal
 
@@ -75,15 +75,22 @@ include profile_website::kerberos
 
 The following parameters are available in the `profile_website::kerberos` class:
 
-* [`http_keytab_file`](#http_keytab_file)
+* [`enable`](#-profile_website--kerberos--enable)
+* [`http_keytab_file`](#-profile_website--kerberos--http_keytab_file)
 
-##### <a name="http_keytab_file"></a>`http_keytab_file`
+##### <a name="-profile_website--kerberos--enable"></a>`enable`
+
+Data type: `Boolean`
+
+Whether or not kerberos keytab is enabled
+
+##### <a name="-profile_website--kerberos--http_keytab_file"></a>`http_keytab_file`
 
 Data type: `String`
 
 Full path to keytab file for http principal
 
-### <a name="profile_websitemonitoring"></a>`profile_website::monitoring`
+### <a name="profile_website--monitoring"></a>`profile_website::monitoring`
 
 Register monitoring for the website
 
@@ -99,22 +106,22 @@ include profile_website::monitoring
 
 The following parameters are available in the `profile_website::monitoring` class:
 
-* [`telegraf_sslcert_check_file`](#telegraf_sslcert_check_file)
-* [`telegraf_website_check_file`](#telegraf_website_check_file)
+* [`telegraf_sslcert_check_file`](#-profile_website--monitoring--telegraf_sslcert_check_file)
+* [`telegraf_website_check_file`](#-profile_website--monitoring--telegraf_website_check_file)
 
-##### <a name="telegraf_sslcert_check_file"></a>`telegraf_sslcert_check_file`
+##### <a name="-profile_website--monitoring--telegraf_sslcert_check_file"></a>`telegraf_sslcert_check_file`
 
 Data type: `String`
 
 Full path to telegraf sslcert check file
 
-##### <a name="telegraf_website_check_file"></a>`telegraf_website_check_file`
+##### <a name="-profile_website--monitoring--telegraf_website_check_file"></a>`telegraf_website_check_file`
 
 Data type: `String`
 
 Full path to telegraf website check file
 
-### <a name="profile_websitephp"></a>`profile_website::php`
+### <a name="profile_website--php"></a>`profile_website::php`
 
 Install and configure PHP
 
@@ -130,43 +137,43 @@ include profile_website::php
 
 The following parameters are available in the `profile_website::php` class:
 
-* [`auto_prepend_file`](#auto_prepend_file)
-* [`auto_prepend_file_content`](#auto_prepend_file_content)
-* [`enable`](#enable)
-* [`ini_file`](#ini_file)
-* [`version`](#version)
+* [`auto_prepend_file`](#-profile_website--php--auto_prepend_file)
+* [`auto_prepend_file_content`](#-profile_website--php--auto_prepend_file_content)
+* [`enable`](#-profile_website--php--enable)
+* [`ini_file`](#-profile_website--php--ini_file)
+* [`version`](#-profile_website--php--version)
 
-##### <a name="auto_prepend_file"></a>`auto_prepend_file`
+##### <a name="-profile_website--php--auto_prepend_file"></a>`auto_prepend_file`
 
 Data type: `String`
 
 Full path to default auto_prepend_file
 
-##### <a name="auto_prepend_file_content"></a>`auto_prepend_file_content`
+##### <a name="-profile_website--php--auto_prepend_file_content"></a>`auto_prepend_file_content`
 
 Data type: `String`
 
 Contents of auto_prepend_file
 
-##### <a name="enable"></a>`enable`
+##### <a name="-profile_website--php--enable"></a>`enable`
 
 Data type: `Boolean`
 
 Whether to enable PHP for this website
 
-##### <a name="ini_file"></a>`ini_file`
+##### <a name="-profile_website--php--ini_file"></a>`ini_file`
 
 Data type: `String`
 
 Full path to default ini_file where PHP settings are set
 
-##### <a name="version"></a>`version`
+##### <a name="-profile_website--php--version"></a>`version`
 
 Data type: `String`
 
 Version of PHP to install/enable via DNF module (RHEL >= 8)
 
-### <a name="profile_websitessl"></a>`profile_website::ssl`
+### <a name="profile_website--ssl"></a>`profile_website::ssl`
 
 Configure SSL certificates for apache httpd
 
@@ -182,22 +189,22 @@ include profile_website::ssl
 
 The following parameters are available in the `profile_website::ssl` class:
 
-* [`certificate_files`](#certificate_files)
-* [`enable_letsencrypt`](#enable_letsencrypt)
+* [`certificate_files`](#-profile_website--ssl--certificate_files)
+* [`enable_letsencrypt`](#-profile_website--ssl--enable_letsencrypt)
 
-##### <a name="certificate_files"></a>`certificate_files`
+##### <a name="-profile_website--ssl--certificate_files"></a>`certificate_files`
 
 Data type: `Hash[String,String]`
 
 Certificate files and contents for manually configured certificates
 
-##### <a name="enable_letsencrypt"></a>`enable_letsencrypt`
+##### <a name="-profile_website--ssl--enable_letsencrypt"></a>`enable_letsencrypt`
 
 Data type: `Boolean`
 
 Enable Let’s Encrypt for ssl certificate management
 
-### <a name="profile_websitevhost"></a>`profile_website::vhost`
+### <a name="profile_website--vhost"></a>`profile_website::vhost`
 
 Ensure apache::vhost configured
 
