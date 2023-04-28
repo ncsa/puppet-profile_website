@@ -21,6 +21,7 @@ profile_website::firewall::https_allowed_subnets:
   #"NCSA public": "141.142.0.0/16"
   #"SSLlabs testing": "64.41.200.96/28"
 
+profile_website::kerberos::enable: true
 profile_website::kerberos::http_keytab_file: "/etc/httpd/conf/keytab"
 
 profile_website::monitoring::telegraf_sslcert_check_file: "/etc/telegraf/telegraf.d/sslcert-check.conf"

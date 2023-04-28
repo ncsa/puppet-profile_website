@@ -104,6 +104,30 @@ apache::vhost:
         rewrite_rule: "(.*)  https://%%{}{SERVER_NAME}/$1 [R,L]"
 ```
 
+If you are using a traditional SSL certificate (rather than via LetsEncrypt) you need to provide the certificates via the following parameters:
+```yaml
+apache::default_ssl_cert: "/etc/pki/tls/certs/%{facts.fqdn}.cer"
+apache::default_ssl_chain: "/etc/pki/tls/certs/%{facts.fqdn}.interm.cer"
+apache::default_ssl_key: "/etc/pki/tls/private/%{facts.fqdn}.key"
+
+profile_website::kerberos::enable: false
+
+# FOLLOWING CERTIFICATE FILES CONTENT SHOULD BE ENCRYPTED
+profile_website::ssl::certificate_files:
+  "/etc/pki/tls/certs/%{facts.fqdn}.cer": |
+    -----BEGIN CERTIFICATE-----
+    ...
+    -----END CERTIFICATE-----
+  "/etc/pki/tls/certs/%{facts.fqdn}.interm.cer": |
+    -----BEGIN CERTIFICATE-----
+    ...
+    -----END CERTIFICATE-----
+  "/etc/pki/tls/private/%{facts.fqdn}.key": |
+    -----BEGIN PRIVATE KEY-----
+    ...
+    -----END PRIVATE KEY-----
+```
+
 ## Dependencies
 - [puppet/letsencrypt](https://forge.puppet.com/modules/puppet/letsencrypt)
 - [puppet/php](https://forge.puppet.com/modules/puppet/php/)
