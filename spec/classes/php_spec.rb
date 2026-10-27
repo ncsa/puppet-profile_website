@@ -14,8 +14,9 @@ describe 'profile_website::php' do
 
         it { is_expected.to contain_class('apache::mod::dir') }
         it { is_expected.to contain_class('apache::mod::proxy_fcgi') }
+        it { is_expected.to contain_class('apache::mod::setenvif') }
         it { is_expected.not_to contain_class('apache::mod::php') }
-        it { is_expected.to contain_apache__custom_config('php-fpm').with_content(%r{SetHandler "proxy:fcgi://127.0.0.1:9000"}) }
+        it { is_expected.to contain_file('/etc/httpd/conf.d/php.conf').without_ensure.without_content }
       end
     end
   end
