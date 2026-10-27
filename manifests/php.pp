@@ -47,6 +47,8 @@ class profile_website::php (
 
     if $handler == 'fpm' {
       # HAND .php REQUESTS TO php-fpm INSTEAD OF LOADING libphp INTO httpd
+      # mod_dir PROVIDES DirectoryIndex (ITS DEFAULT LIST INCLUDES index.php)
+      include apache::mod::dir
       include apache::mod::proxy_fcgi
       apache::custom_config { 'php-fpm':
         content => @("EOT"),
@@ -54,9 +56,8 @@ class profile_website::php (
           <FilesMatch \.php$>
             SetHandler "proxy:${fpm_proxy}"
           </FilesMatch>
-          DirectoryIndex index.php index.html
           | EOT
-        require => Class['apache::mod::proxy_fcgi'],
+        require => Class['apache::mod::dir', 'apache::mod::proxy_fcgi'],
       }
     } else {
       include apache::mod::php
