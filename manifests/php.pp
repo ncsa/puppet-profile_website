@@ -9,6 +9,13 @@
 # @param enable
 #   Whether to enable PHP for this website
 #
+# @param handler
+#   How Apache runs PHP: 'mod_php' (libphp loaded into httpd) or 'fpm'
+#   (php-fpm via mod_proxy_fcgi using the php-fpm RPM's conf.d/php.conf;
+#   required on RHEL 9, which has no mod_php). With 'fpm', leave the
+#   php-fpm 'www' pool at the RPM default (php::fpm_pools: {}) so it
+#   listens on the socket php.conf points at.
+#
 # @param ini_file
 #   Full path to default ini_file where PHP settings are set
 #
@@ -21,6 +28,7 @@ class profile_website::php (
   String               $auto_prepend_file,
   String               $auto_prepend_file_content,
   Boolean              $enable,
+  Enum['mod_php', 'fpm'] $handler,
   String               $ini_file,
   String               $version,
 ) {
@@ -35,7 +43,21 @@ class profile_website::php (
       }
     }
 
-    include apache::mod::php
+    if $handler == 'fpm' {
+      # USE THE php-fpm RPM'S OWN APACHE CONFIG (conf.d/php.conf), WHICH HANDS
+      # .php REQUESTS TO php-fpm; LOAD THE MODULES IT USES
+      include apache::mod::dir         # DirectoryIndex
+      include apache::mod::proxy_fcgi  # SetHandler "proxy:unix:...|fcgi://..."
+      include apache::mod::setenvif    # SetEnvIfNoCase Authorization
+
+      # DECLARING THE FILE KEEPS apache::purge_configs FROM DELETING IT;
+      # NO ensure/content, SO PUPPET NEVER CREATES OR CHANGES IT
+      file { "${apache::confd_dir}/php.conf":
+        require => Class['php'],
+      }
+    } else {
+      include apache::mod::php
+    }
     include php
 
     file { $auto_prepend_file:
