@@ -37,6 +37,8 @@ profile_website::php::auto_prepend_file_content: |
     unset($_SERVER['PHP_AUTH_PW']);
   ?>
 profile_website::php::enable: false
+profile_website::php::fpm_proxy: "fcgi://127.0.0.1:9000"
+profile_website::php::handler: "mod_php"
 profile_website::php::ini_file: "/etc/php.ini"
 profile_website::php::version: "7.2"
 

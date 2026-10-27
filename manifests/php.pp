@@ -9,6 +9,14 @@
 # @param enable
 #   Whether to enable PHP for this website
 #
+# @param fpm_proxy
+#   php-fpm address Apache hands .php requests to when handler is 'fpm'
+#   (matches the default puppet-php 'www' pool)
+#
+# @param handler
+#   How Apache runs PHP: 'mod_php' (libphp loaded into httpd) or 'fpm'
+#   (php-fpm via mod_proxy_fcgi; required on RHEL 9, which has no mod_php)
+#
 # @param ini_file
 #   Full path to default ini_file where PHP settings are set
 #
@@ -21,6 +29,8 @@ class profile_website::php (
   String               $auto_prepend_file,
   String               $auto_prepend_file_content,
   Boolean              $enable,
+  String               $fpm_proxy,
+  Enum['mod_php', 'fpm'] $handler,
   String               $ini_file,
   String               $version,
 ) {
@@ -35,7 +45,22 @@ class profile_website::php (
       }
     }
 
-    include apache::mod::php
+    if $handler == 'fpm' {
+      # HAND .php REQUESTS TO php-fpm INSTEAD OF LOADING libphp INTO httpd
+      include apache::mod::proxy_fcgi
+      apache::custom_config { 'php-fpm':
+        content => @("EOT"),
+          # This file is managed by Puppet.
+          <FilesMatch \.php$>
+            SetHandler "proxy:${fpm_proxy}"
+          </FilesMatch>
+          DirectoryIndex index.php index.html
+          | EOT
+        require => Class['apache::mod::proxy_fcgi'],
+      }
+    } else {
+      include apache::mod::php
+    }
     include php
 
     file { $auto_prepend_file:

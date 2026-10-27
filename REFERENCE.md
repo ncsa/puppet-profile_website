@@ -140,6 +140,8 @@ The following parameters are available in the `profile_website::php` class:
 * [`auto_prepend_file`](#-profile_website--php--auto_prepend_file)
 * [`auto_prepend_file_content`](#-profile_website--php--auto_prepend_file_content)
 * [`enable`](#-profile_website--php--enable)
+* [`fpm_proxy`](#-profile_website--php--fpm_proxy)
+* [`handler`](#-profile_website--php--handler)
 * [`ini_file`](#-profile_website--php--ini_file)
 * [`version`](#-profile_website--php--version)
 
@@ -160,6 +162,20 @@ Contents of auto_prepend_file
 Data type: `Boolean`
 
 Whether to enable PHP for this website
+
+##### <a name="-profile_website--php--fpm_proxy"></a>`fpm_proxy`
+
+Data type: `String`
+
+php-fpm address Apache hands .php requests to when handler is 'fpm'
+(matches the default puppet-php 'www' pool)
+
+##### <a name="-profile_website--php--handler"></a>`handler`
+
+Data type: `Enum['mod_php', 'fpm']`
+
+How Apache runs PHP: 'mod_php' (libphp loaded into httpd) or 'fpm'
+(php-fpm via mod_proxy_fcgi; required on RHEL 9, which has no mod_php)
 
 ##### <a name="-profile_website--php--ini_file"></a>`ini_file`
 
